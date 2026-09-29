@@ -1,89 +1,102 @@
+const express = require("express");
+const cors = require("cors");
+const rateLimit = require("express-rate-limit");
 
-// Using Common JS
+const logger = require("./middleware/logger");
+const errorHandler = require("./middleware/errorHandler");
+const userRoutes = require("./routes/userRoutes");
 
-// console.log("Node.js server started.");
+const app = express();
 
-// const { add } = require("./math");    // common JS
+const PORT = 5000;
 
-// console.log(add(100, 20));  
 
-// -------------------------------------------------
+// ============================
+// Built-in Middleware
+// ============================
 
-// Using ES Module
+app.use(express.json());
 
-// import { add } from "./math.js";
-     
-// console.log("Node.js server started.");
 
-// console.log(add(100, 20));
+// ============================
+// Logging Middleware
+// ============================
 
-// const port = process.env.PORT || 3000;
+app.use(logger);
 
-// console.log(port);
 
-// ---------------------------------------------------
+// ============================
+// CORS
+// ============================
 
-// console.log(__dirname); 
+app.use(
+    cors({
+        origin: "http://localhost:3000"
+    })
+);
 
-// console.log(__filename);
 
-// -----------------------------------------------
+// ============================
+// Rate Limiting
+// ============================
 
-// ======== fs.readFileSync()  =>  Synchronous / Blocking ===============
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
 
-// const fs = require("fs");
+    message: {
+        message: "Too many requests, please try again later."
+    }
+});
 
-// const data = fs.readFileSync("data.txt", "utf8");
+app.use(limiter);
 
-// console.log(data);
- 
-// console.log("Finished");
 
-// --------------------------------------------------
+// ============================
+// Routes
+// ============================
 
-// =================  fs.readFile()  =>  Asynchronous / Callback ========
+app.get("/", (req, res) => {
 
-// const fs = require("fs");
+    res.json({
+        message: "Node.js REST API is running"
+    });
 
-// fs.readFile("data.txt", "utf8", (err, data) => {
+});
 
-//     if (err) {
-//         console.log(err);
-//         return;
-//     }
+// For all routes
+app.use("/api/users", userRoutes);
 
-//     console.log(data);
-// });
 
-// console.log("Finished");
+// ============================
+// 404 Handler
+// ============================
 
-// ------------------------------------------------
+app.use((req, res) => {
 
-// ==================  fs/promises  =>  Asynchronous / Promise  =>  async / await  ====================
+    res.status(404).json({
+        success: false,
+        message: "Route not found"
+    });
 
-// const fs = require("fs/promises");
+});
 
-// async function readData() {
 
-//     try {
+// ============================
+// Central Error Handler
+// ============================
 
-//         const data = await fs.readFile("data.txt", "utf8");
+app.use(errorHandler);
 
-//         console.log(data);
 
-//     } catch (error) {
+// ============================
+// Start Server
+// ============================
 
-//         console.log(error);
+app.listen(PORT, () => {
 
-//     }
-// }
-// readData();
-// console.log("Finished");
+    console.log(
+        `Server running on http://localhost:${PORT}`
+    );
 
-// ---------------------------------------------------
-
-const path = require("path");
-
-const result = path.resolve("data", "file.txt");
-
-console.log(result);
+});
