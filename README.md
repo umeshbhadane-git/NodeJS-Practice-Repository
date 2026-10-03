@@ -1,7 +1,5 @@
 # MongoDB Schema Design Exercises
 
-> **Focus:** Embed vs. Reference decisions based on expected queries, access patterns, relationship cardinality, and document growth.
-
 ---
 
 # 1. Twitter Clone
