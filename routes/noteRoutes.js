@@ -6,7 +6,7 @@ const notes = require("../data/notes");
 const AppError = require("../errors/AppError");
 const requireAuth = require("../middleware/requireAuth");
 
-const router = express.Router();
+const router = express.Router(); 
 
 
 // ========================================

@@ -13,22 +13,17 @@ const PORT = 5000;
 
 
 // ========================================
-// Built-in middleware
+// Middleware
 // ========================================
 
 app.use(express.json());
 
 
 // ========================================
-// Authentication routes
+// Routes
 // ========================================
 
 app.use("/auth", authRoutes);
-
-
-// ========================================
-// Protected notes routes
-// ========================================
 
 app.use("/notes", noteRoutes);
 
@@ -50,20 +45,29 @@ app.use((req, res) => {
 
 
 // ========================================
-// Central error handler
+// Error handler
 // ========================================
 
 app.use(errorHandler);
 
 
 // ========================================
-// Start server
+// Start server only when directly executed
 // ========================================
 
-app.listen(PORT, () => {
+if (require.main === module) {
 
-    console.log(
-        `Server running on http://localhost:${PORT}`
-    );
+    app.listen(PORT, () => {
 
-});
+        console.log(
+            `Server running on http://localhost:${PORT}`
+        );
+
+    });
+
+}
+
+
+// Export app for Supertest
+
+module.exports = app;

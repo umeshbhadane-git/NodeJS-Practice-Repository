@@ -11,6 +11,6 @@ const notes = [
         title: "MongoDB",
         content: "Learn MongoDB"
     }
-];
+]; 
 
 module.exports = notes;
