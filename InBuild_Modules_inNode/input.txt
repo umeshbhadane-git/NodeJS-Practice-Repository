@@ -1,2 +1,0 @@
-
-Transfering the data from Input.txt to Output.txt

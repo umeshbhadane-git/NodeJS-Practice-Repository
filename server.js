@@ -1,89 +1,73 @@
+require("dotenv").config();
 
-// Using Common JS
+const express = require("express");
 
-// console.log("Node.js server started.");
+const authRoutes = require("./routes/authRoutes");
+const noteRoutes = require("./routes/noteRoutes");
 
-// const { add } = require("./math");    // common JS
+const errorHandler = require("./middleware/errorHandler");
 
-// console.log(add(100, 20));  
+const app = express();
 
-// -------------------------------------------------
+const PORT = 5000;
 
-// Using ES Module
 
-// import { add } from "./math.js";
-     
-// console.log("Node.js server started.");
+// ========================================
+// Middleware
+// ========================================
 
-// console.log(add(100, 20));
+app.use(express.json());
 
-// const port = process.env.PORT || 3000;
 
-// console.log(port);
+// ========================================
+// Routes
+// ========================================
 
-// ---------------------------------------------------
+app.use("/auth", authRoutes);
 
-// console.log(__dirname); 
+app.use("/notes", noteRoutes);
 
-// console.log(__filename);
 
-// -----------------------------------------------
+// ========================================
+// 404 handler
+// ========================================
 
-// ======== fs.readFileSync()  =>  Synchronous / Blocking ===============
+app.use((req, res) => {
 
-// const fs = require("fs");
+    res.status(404).json({
+        success: false,
+        error: {
+            message: "Route not found"
+        }
+    });
 
-// const data = fs.readFileSync("data.txt", "utf8");
+});
 
-// console.log(data);
- 
-// console.log("Finished");
 
-// --------------------------------------------------
+// ========================================
+// Error handler
+// ========================================
 
-// =================  fs.readFile()  =>  Asynchronous / Callback ========
+app.use(errorHandler);
 
-// const fs = require("fs");
 
-// fs.readFile("data.txt", "utf8", (err, data) => {
+// ========================================
+// Start server only when directly executed
+// ========================================
 
-//     if (err) {
-//         console.log(err);
-//         return;
-//     }
+if (require.main === module) {
 
-//     console.log(data);
-// });
+    app.listen(PORT, () => {
 
-// console.log("Finished");
+        console.log(
+            `Server running on http://localhost:${PORT}`
+        );
 
-// ------------------------------------------------
+    });
 
-// ==================  fs/promises  =>  Asynchronous / Promise  =>  async / await  ====================
+}
 
-// const fs = require("fs/promises");
 
-// async function readData() {
+// Export app for Supertest
 
-//     try {
-
-//         const data = await fs.readFile("data.txt", "utf8");
-
-//         console.log(data);
-
-//     } catch (error) {
-
-//         console.log(error);
-
-//     }
-// }
-// readData();
-// console.log("Finished");
-
-// ---------------------------------------------------
-
-const path = require("path");
-
-const result = path.resolve("data", "file.txt");
-
-console.log(result);
+module.exports = app;
